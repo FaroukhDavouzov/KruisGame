@@ -34,9 +34,14 @@ export default function GameInvites(){
     const acceptGameInvite = (email) => {
         firebase.firestore().collection("users").doc(currentUser.email).collection("gameInvites").doc(email).delete()
         .then(()=>{
-            firebase.firestore().collection("games").doc(currentUser.email+email).set({
+            firebase.firestore().collection("users").doc(currentUser.email).collection("games").doc(email).set({
                 player1: currentUser.email,
                 player2:email
+            }).then(() => {
+                firebase.firestore().collection("users").doc(email).collection("games").doc(currentUser.email).set({
+                    player1: currentUser.email,
+                    player2:email
+                })
             })
         })
         .catch((ex) => alert(ex)).then(()=>{
