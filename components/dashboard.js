@@ -68,7 +68,7 @@ export default class Dashboard extends Component {
         </TouchableOpacity>
         <TouchableOpacity
         style={styles.button}
-        onPress={() =>this.props.navigation.navigate('about')}
+        onPress={() =>this.props.navigation.navigate('About')}
         >
             <Text style={styles.textStyleButton}>About</Text>
         </TouchableOpacity>

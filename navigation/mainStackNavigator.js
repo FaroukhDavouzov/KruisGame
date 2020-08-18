@@ -10,6 +10,7 @@ import PendingInvitesScreen from '../components/pendingInvites'
 import Friends from '../components/friends'
 import GameInvites from '../components/gameInvites'
 import Games from '../components/games'
+import about from '../components/about'
 
 
 const Stack = createStackNavigator()
@@ -86,6 +87,14 @@ export default function MyStack() {
          component={Games} 
          options={
            { title: 'Games' },
+           {headerLeft: null} 
+         }
+        />
+        <Stack.Screen 
+         name="About" 
+         component={about} 
+         options={
+           { title: 'About' },
            {headerLeft: null} 
          }
         />
