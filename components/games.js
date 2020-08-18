@@ -45,7 +45,7 @@ export default function Games(){
         }
         renderItem={({ item }) => (
             <View style={styles.game}>
-                <Text>{item.email}</Text>
+                <Text>{item.key}</Text>
                 <TouchableOpacity
                 onPress={() => goToGame(item.email)}
                 style={styles.button}>

@@ -26,12 +26,26 @@ export default function friends(){
     },[])
 
     const sendGameInvite = (email) => {
-        firebase.firestore().collection("users").doc(email).collection("gameInvites").doc(currentUser.email).set({
-            email : currentUser.email
-        }).then((res) => {
-            alert("Game invite send!")
-        }).catch((err) => {
-            alert(err)
+        if(alreadyInGameWithOtherUser){
+            alert("You're already in a game with this user")
+        }else{
+            firebase.firestore().collection("users").doc(email).collection("gameInvites").doc(currentUser.email).set({
+                email : currentUser.email
+            }).then((res) => {
+                alert("Game invite send!")
+            }).catch((err) => {
+                alert(err)
+            })
+        }
+    }
+
+    const alreadyInGameWithOtherUser = (email) => {
+        firebase.firestore().collection("users").doc(currentUser.email).collection("games").doc(email).onSnapshot((documentsnapshot) =>{
+            if(documentsnapshot.exists){
+                return true
+            }else{
+                return false
+            }
         })
     }
     
