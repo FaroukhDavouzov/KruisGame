@@ -8,7 +8,7 @@ export default function GameInvites(){
     const [loading, setLoading] = useState(true); // Set loading to true on component mount
     const [gameInvites, setGameInvites] = useState([]); // Initial empty array of users
     const [currentUser,setCurrentUser] = useState()
-
+    
     useEffect(() => {
         const subscriber = firebase.firestore().collection("users").doc(firebase.auth().currentUser.email).collection("gameInvites").onSnapshot((querysnapshot)=>{
             const invites = []
@@ -32,19 +32,25 @@ export default function GameInvites(){
     }
 
     const acceptGameInvite = (email) => {
-        firebase.firestore().collection("users").doc(currentUser.email).collection("gameInvites").doc(email).delete()
-        .then(()=>{
-            firebase.firestore().collection("users").doc(currentUser.email).collection("games").doc(email).set({
-                player1: currentUser.email,
-                player2:email
-            }).then(() => {
-                firebase.firestore().collection("users").doc(email).collection("games").doc(currentUser.email).set({
-                    player1: currentUser.email,
-                    player2:email
-                })
-            })
+        firebase.firestore().collection("rooms").add({
+            player1: currentUser.email,
+            player2:email
         })
-        .catch((ex) => alert(ex)).then(()=>{
+        .then(docRef=>{
+            firebase.firestore().collection("users").doc(currentUser.email).collection("games").doc(email).set({
+                roomId: docRef.id,
+            }).then(()=>{
+                firebase.firestore().collection("users").doc(email).collection("games").doc(currentUser.email).set({
+                    roomId: docRef.id
+                })
+            }).catch((ex)=> alert(ex))
+            .catch((ex)=>alert(ex))
+        })
+        .then(()=>{
+            firebase.firestore().collection("users").doc(currentUser.email).collection("gameInvites").doc(email).delete()
+            .then(()=>{
+            })
+            .catch((ex) => alert(ex))
         })
     }
     

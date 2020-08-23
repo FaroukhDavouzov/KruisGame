@@ -66,6 +66,12 @@ export default class Dashboard extends Component {
         >
             <Text style={styles.textStyleButton}>Games</Text>
         </TouchableOpacity>
+        <TouchableOpacity
+        style={styles.button}
+        onPress={() =>this.props.navigation.navigate('Room')}
+        >
+            <Text style={styles.textStyleButton}>Room</Text>
+        </TouchableOpacity>
       </View>
     );
   }

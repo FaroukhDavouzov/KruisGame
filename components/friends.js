@@ -26,7 +26,7 @@ export default function friends(){
     },[])
 
     const sendGameInvite = (email) => {
-        if(alreadyInGameWithOtherUser){
+        if(alreadyInGameWithOtherUser(email)){
             alert("You're already in a game with this user")
         }else{
             firebase.firestore().collection("users").doc(email).collection("gameInvites").doc(currentUser.email).set({

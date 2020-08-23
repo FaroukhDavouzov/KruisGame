@@ -3,41 +3,37 @@ import { Button, StyleSheet, TextInput, ScrollView, ActivityIndicator, View,Text
 import firebase from '../database/firebase';
 import { AntDesign } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import { NavigationHelpersContext } from '@react-navigation/native';
+import {getGames} from '../components/gamesApi'
 
-export default function Games(){
-    const [loading, setLoading] = useState(true); // Set loading to true on component mount
-    const [games, setGames] = useState([]); // Initial empty array of users
-    const [currentUser,setCurrentUser] = useState()
+export default class Games extends Component{
 
-    useEffect(()=>{
-        const subscriber = firebase.firestore().collection("users").doc(firebase.auth().currentUser.email).collection("games").onSnapshot((querySnapshot) => {
-            const gamesFromDb = []
-            querySnapshot.forEach((documentsnapshot) =>{
-                gamesFromDb.push({
-                    ...documentsnapshot.data(),
-                    key:documentsnapshot.id
-                })
-            })
-            setGames(gamesFromDb)
-            setLoading(false)
-            setCurrentUser(firebase.auth().currentUser)
+    state={
+        games: [],
+        currentUser: ""
+    }
+
+    goToGame = (email) => {
+        firebase.firestore().collection("users").doc(firebase.auth().currentUser.email).collection("games").doc(email).get().then((documentsnapshot)=>{
+            this.props.navigation.navigate("Room",{roomId:documentsnapshot.get("roomId")})
         })
-        return () => subscriber()
-    },[])
-
-    if(loading){
-        return(
-            <ActivityIndicator></ActivityIndicator>
-        )
     }
 
-    const goToGame = (email) => {
-
+    onGamesReceived = (games)=>{
+        console.log(games)
+        this.setState(prevState =>({
+            games:prevState.games = games
+        }))
     }
 
-    return (
-        <FlatList
-        data={games}
+    componentDidMount(){
+        getGames(this.onGamesReceived)
+    }
+
+    render (){
+        return( 
+            <FlatList
+        data={this.state.games}
         ListEmptyComponent={
             <View>
                 <Text style={{ fontWeight: 'bold' }}>No games</Text>
@@ -47,14 +43,15 @@ export default function Games(){
             <View style={styles.game}>
                 <Text>{item.key}</Text>
                 <TouchableOpacity
-                onPress={() => goToGame(item.email)}
+                onPress={() => this.goToGame(item.key)}
                 style={styles.button}>
                     <Text style={{color:"#fff"}}>Go to Game</Text>
                 </TouchableOpacity>
             </View>
         )}
     />
-    )
+        )
+    }
 }
 
 const styles = StyleSheet.create({
